@@ -1,0 +1,111 @@
+import os
+import numpy as np
+import cv2
+import random
+import datetime
+import io
+import json
+import keras
+import string
+
+
+from keras.models import Model, load_model
+from keras.layers import Input, LSTM, Dense, Conv2D, MaxPooling2D, Reshape, Dropout, BatchNormalization, Activation, Conv2DTranspose, Add
+#from keras.callbacks import EarlyStopping
+#import keras.backend as K
+from keras.optimizers import Adam
+
+from base.base_model import BaseModel
+from keras.applications.vgg16 import VGG16
+from keras.preprocessing import image
+#from keras.applications.vgg16 import preprocess_input
+import numpy as np
+from keras.models import model_from_json
+
+
+def encoder_graph(y_size, x_size, num_channels, num_classes):
+
+    input_graph = Input(shape=(y_size, x_size, num_channels), name='input_image')
+
+    graph = input_graph
+
+    #block_1
+    graph = Conv2D(64, 3, padding='same', activation='relu', use_bias=True, name='block1_conv1')(graph)
+    graph = Conv2D(64, 3, padding='same', activation='relu', use_bias=True, name='block1_conv2')(graph)
+    graph = MaxPooling2D(pool_size=(2, 2), padding='valid', name='block1_pool')(graph)
+
+    #graph = Dropout(0.2)(graph)
+    
+    #block_2
+    graph = Conv2D(128, 3, padding='same', activation='relu', use_bias=True, name='block2_conv1')(graph)
+    graph = Conv2D(128, 3, padding='same', activation='relu', use_bias=True, name='block2_conv2')(graph)
+    graph = MaxPooling2D(pool_size=(2, 2), padding='valid', name='block2_pool')(graph)
+    
+   # graph = Dropout(0.2)(graph)
+
+    #block_3
+    graph = Conv2D(256, 3, padding='same', activation='relu', use_bias=True, name='block3_conv1')(graph)
+    graph = Conv2D(256, 3, padding='same', activation='relu', use_bias=True, name='block3_conv2')(graph)
+    graph = Conv2D(256, 3, padding='same', activation='relu', use_bias=True, name='block3_conv3')(graph)
+    graph = MaxPooling2D(pool_size=(2, 2), padding='valid', name='block3_pool')(graph)
+    graph = Dropout(0.4)(graph)
+
+   # graph = Dropout(0.2)(graph)
+    
+    pool_3 = graph
+
+    #print(pool_3.shape)
+
+    #block_4
+    graph = Conv2D(512, 3, padding='same', activation='relu', use_bias=True, name='block4_conv1')(graph)
+    graph = Conv2D(512, 3, padding='same', activation='relu', use_bias=True, name='block4_conv2')(graph)
+    graph = Conv2D(512, 3, padding='same', activation='relu', use_bias=True, name='block4_conv3')(graph)
+    graph = MaxPooling2D(pool_size=(2, 2), padding='valid', name='block4_pool')(graph)
+    graph = Dropout(0.4)(graph)
+    
+   # graph = Dropout(0.2)(graph)
+    
+    pool_4 = graph
+
+    #block_5
+    graph = Conv2D(512, 3, padding='same', activation='relu', use_bias=True, name='block5_conv1')(graph)
+    graph = Conv2D(512, 3, padding='same', activation='relu', use_bias=True, name='block5_conv2')(graph)
+    graph = Conv2D(512, 3, padding='same', activation='relu', use_bias=True, name='block5_conv3')(graph)
+    graph = MaxPooling2D(pool_size=(2, 2), padding='valid', name='block5_pool')(graph)
+    
+   # graph = Dropout(0.2)(graph)
+
+    #fc_6
+    graph = Conv2D(4096, 7, padding='same', activation='relu', use_bias=True, name='fc_6')(graph)
+    graph = Dropout(0.4)(graph)
+    
+    #fc_7
+    graph = Conv2D(4096, 1, padding='same', activation='relu', use_bias=True, name='fc_7')(graph)
+    graph = Dropout(0.4)(graph)
+
+    encoder_graph = Conv2D(num_classes, 1, padding='same', activation='relu', use_bias=True, name='encoder_graph')(graph)
+    graph = Dropout(0.4)(graph)
+    
+    return input_graph, pool_3, pool_4, encoder_graph
+
+
+def encoder_graph_vgg16(num_classes):
+
+    vgg16 = VGG16(weights='imagenet', include_top=False)
+
+    input_graph = vgg16.input
+
+    pool_3 = vgg16.get_layer('block3_pool').output
+    pool_4 = vgg16.get_layer('block4_pool').output
+
+    vgg16_out = vgg16.output
+
+    #fc_6
+    encoder_graph = Conv2D(4096, 7, padding='same', activation='relu', use_bias=True, name='fc_6')(vgg16_out)
+    
+    #fc_7
+    encoder_graph = Conv2D(4096, 1, padding='same', activation='relu', use_bias=True, name='fc_7')(encoder_graph)
+
+    encoder_graph = Conv2D(num_classes, 1, padding='same', activation='relu', use_bias=True, name='encoder_graph')(encoder_graph)
+    
+    return input_graph, pool_3, pool_4, encoder_graph
