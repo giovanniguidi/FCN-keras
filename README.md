@@ -2,7 +2,7 @@
 
 This project is an implementation of the Fully Convolutional Network for Semantic Segmentation model (Long et al. 2015, https://arxiv.org/pdf/1411.4038.pdf) trained on VOC2011, although it can be easily retrained on other datasets. The task this algorithm tries to solve is "semantic segmentation", i.e. given a picture assign each pixel a "semantic" label, such as tree, street, sky, car. 
 
-![picture alt](https://github.com/giovanniguidi/FCN-keras/tree/master/figures/semantic_segmentation.jpg "")
+![picture alt](https://github.com/giovanniguidi/FCN-keras/blob/master/figures/semantic_segmentation.jpg "")
 
 The model is made by two parts, the "encoder" which is a standard convolutional network (VGG16 in this case following the paper), and the decoder which upsamples the result of the encoder to the full resolution of the original image using transposed convolutions. Skips between the encoder and decoder ensure that the spatial information from early layers of the encoder is passed to the decoder, increasing the localization accuracy of the model. 
 
