@@ -1,17 +1,15 @@
 # Fully Convolutional Network for Semantic Segmentation
 
-This project is an implementation of the Fully Convolutional Network for Semantic Segmentation (Long et al. 2015, https://arxiv.org/pdf/1411.4038.pdf). The task this algorithm wants to solve is semantic segmentation, namely given a picture we want to assign each label a "semantic" meaning, such as tree, street, sky, car.   HERE IMAGE
+This project is an implementation of the Fully Convolutional Network for Semantic Segmentation model (Long et al. 2015, https://arxiv.org/pdf/1411.4038.pdf) trained on VOC2011, although it can be easily retrained on other datasets. The task this algorithm tries to solve is "semantic segmentation", i.e. given a picture assign each pixel a "semantic" label, such as tree, street, sky, car. 
+
+![picture alt](https://github.com/giovanniguidi/FCN-keras/tree/master/figures/semantic_segmentation.jpg "")
+
+The model is made by two parts, the "encoder" which is a standard convolutional network (VGG16 in this case following the paper), and the decoder which upsamples the result of the encoder to the full resolution of the original image using transposed convolutions. Skips between the encoder and decoder ensure that the spatial information from early layers of the encoder is passed to the decoder, increasing the localization accuracy of the model. 
+
+![picture alt](https://github.com/giovanniguidi/FCN-keras/tree/master/figures/FCN_1.jpg "")
 
 
-![picture alt](https://github.com/giovanniguidi/Seq-2-Seq-OCR/blob/master/figures/seq2seq.png "")
-
-The model in the paper is made by two parts, the "encoder" which is a standard convolutional network (in this case VGG16) and the decoder which is responsible to upsample the result of the decoder to the full resolution of the original image. Skips between teh encoder and decoder ensure that the spatial information from early layers of the encoder is preserved, increasing the localization accuracy of the model. 
-
-In the paper they propose 3 types of decoder which they called 8x, 16x, 32x according to the stride of the network.
-
-The most accurate one is 8x, 
-
-They use pretrained weights on ImageNet for VGG16 network.
+In the paper the authors use pretrained weights on ImageNet for the encoder, and tested three different decoders with increasing stride, 32x, 16x, 8x and corresponding increasing metrics.
 
 
 ## Depencencies
@@ -23,22 +21,21 @@ pip install -r requirements.txt
 
 ## Data
 
+The dataset used for this project is the Pascal Visual Object Classes Challenge 2011 (VOC2011, http://host.robots.ox.ac.uk/pascal/VOC/voc2011/index.html).
 
-The dataset is from the Pascal Visual Object Classes Challenge 2011 (VOC2011)
-
-The dataset contains around 2000 images belonging to 20 classes (person, bird, cat, cow, dog, horse, sheep, aeroplane, bicycle, boat, bus, car, motorbike, train, bottle, chair, dining table, potted plant, sofa, tv/monitor). 
+This dataset contains ~2000 images belonging to 20 classes (person, bird, cat, cow, dog, horse, sheep, aeroplane, bicycle, boat, bus, car, motorbike, train, bottle, chair, dining table, potted plant, sofa, tv/monitor). 
 
 The dataset can be downloaded at:
 
 http://host.robots.ox.ac.uk/pascal/VOC/voc2011/VOCtrainval_25-May-2011.tar
 
-If you want to use this project you need to untar it into "./datasets" folder. 
+You need to untar this file into "./datasets" folder to use this project without modifing the config file. 
 
-This is an example of images in the dataset:
+This is an example of the images in the dataset:
 
-![picture alt](https://github.com/giovanniguidi/Seq-2-Seq-OCR/blob/master/test_images/b01-049-01-00.png "")
+![picture alt](https://github.com/giovanniguidi/FCN-keras/tree/master/test_images/2009_003466 "")
 
-Modifying the data generator the model can be easily trained on other data
+Modifying the data generator this implementation of FCN model can be easily trained on other data.
 
 
 ## Project structure
@@ -47,7 +44,7 @@ The project has this structure:
 
 - base: base classes for data_generator, model, trainer and predictor 
 
-- callbacks: custom callbacks (unused)
+- callbacks: custom callbacks 
 
 - configs: configuration file
 
@@ -58,6 +55,8 @@ The project has this structure:
 - experiments: contains snapshots, that can be used for restoring the training 
 
 - figures: plots and figures
+
+- losses: custom losses
 
 - models: neural network model
 
@@ -75,7 +74,7 @@ The project has this structure:
 
 - trainers: trainer classes
 
-- utils: various utilities, including the one to generate the labels
+- utils: various utilities, including the one to generate the labels.json
 
 
 ## Input
@@ -86,7 +85,7 @@ The input json can be created from utils/create_labels.py and follows this struc
 dataset['train'], ['val'], ['test']
 ```
 
-Each split gives a list of dictionary: {'filename': FILENAME, 'label': LABEL}.
+Each split gives a list of dictionary: {'filename': FILENAME, 'annotation': ANNOTATION}.
 
 
 ## Weights
@@ -128,55 +127,43 @@ In "./test_images/" there are some images that can be used for testing the model
 To predict on a single image you can run:
 
 ```
-python main.py -c configs/config.yml --predict --filename test_images/test_images/f07-036-02-02.png
+python main.py -c configs/config.yml --predict --filename test_images/test_images/2011_001880.jpg
 ```
 
 
-## Performance
+## Results
 
-On the test set we get this performance (character error rate and word error rate):
+Here an example of prediction (check inference notebook in "notebooks"):
+
+![picture alt](https://github.com/giovanniguidi/FCN-keras/tree/master/figures/pred_3.png "")
+
+On the test set we get this metrics:
 
 ```
-CER:  12.62 %
-WER:  26.65 %
-```
-
-########### dropout 0.5:   
-
------ train ----- 
-
-pixel accuracy: 0.86
-mean accuracy: 0.49
-mean IoU: 0.36
-freq_weighted_mean_IoU: 0.77
-
-
------ test ------
-
 pixel accuracy: 0.75
 mean accuracy: 0.21
 mean IoU: 0.14
-freq_weighted_mean_IoU: 0.62
+freq weighted mean IoU: 0.62
+````
 
-################## baseline
+## Train on other data
 
+To use this implementation on other data with minimal modification you need first to create the labels.json file, by modifying the script in utils/create_labels.py. Then you need do adapt the data_generator.py to read you images and annotations. 
 
-pixel acc.    mean acc.   mean IU     f.w. IU
-
-90.3          75.9         62.7        83.2
-
+The output of the data generator should be two numpy arrays, one containing the images (reshaped and normalized) and the other the annotations with shape (batch_size, y_size, x_size, one_hot_encoded_classes).
+ 
+You can train randomly initialize the encoder (instead of using pretrained weights on ImageNet) by setting "train_from_scratch: true" in the config.yml file.
 
 ## Technical details
 
-Images are normalized between -1 and 1
+Images are normalized between -1 and 1.
 
-Data augmentation is used
-
+Data augmentation is used flipping, tranlating, and changin random_brightness and random_saturation.
 
 
 ## To do
 
-- [x] -----
+- [x] 
 
 
 ## References

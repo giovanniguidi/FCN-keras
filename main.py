@@ -10,7 +10,7 @@ from trainers.trainer import TrainerFCN
 from predictors.predictor import PredictorFCN
 from utils.score_prediction import score_prediction
 from preprocessing.preproc_functions import read_image, normalize_0_mean_1_variance
-
+from keras.applications.vgg16 import preprocess_input
 
 def train(args):
     """
@@ -58,9 +58,9 @@ def predict_on_test(args):
     #print(images_test.shape)
     #print(len(labels_test))
     
-    graph_file =  config['network']['graph_path']
-    weights_file = config['predict']['weights_file']
-    batch_size = config['predict']['batch_size']
+#    graph_file =  config['network']['graph_path']
+#    weights_file = config['predict']['weights_file']
+#    batch_size = config['predict']['batch_size']
     
     predictor = PredictorFCN(config)
    
@@ -97,48 +97,41 @@ def predict(args):
     y_size = config['image']['image_size']['y_size']
     x_size = config['image']['image_size']['x_size']
     num_channels = config['image']['image_size']['num_channels']
-    convert_to_grayscale = config['image']['convert_to_grayscale']
+#    convert_to_grayscale = config['image']['convert_to_grayscale']
             
     #read image
-    if num_channels == 1 or (num_channels == 3 and convert_to_grayscale):
-        image = read_image_BW('./', filename, y_size, x_size)
-        image = normalize_0_mean_1_variance_BW(image, y_size, x_size)
-        image = np.reshape(image, (1, y_size, x_size, 1))
-    else:
-        image = read_image_color('./', filename, y_size, x_size)
-        image = normalize_0_mean_1_variance_color(image, y_size, x_size)
-        image = np.reshape(image, (1, y_size, x_size, 3))
+#    if num_channels == 1 or (num_channels == 3 and convert_to_grayscale):
+#        image = read_image_BW('./', filename, y_size, x_size)
+#        image = normalize_0_mean_1_variance_BW(image, y_size, x_size)
+#        image = np.reshape(image, (1, y_size, x_size, 1))
+#    else:
+#        image = read_image_color('./', filename, y_size, x_size)
+#        image = normalize_0_mean_1_variance_color(image, y_size, x_size)
+#        image = np.reshape(image, (1, y_size, x_size, 3))
     
     #print(image.shape)
         
-    graph_file =  config['predict']['graph_file']
-    weights_file = config['predict']['weights_file']
-    batch_size = 1
+#    graph_file =  config['predict']['graph_file']
+#    weights_file = config['predict']['weights_file']
 
-    predictor = PredictorSeq2Seq(config, graph_file, weights_file, test_generator.num_decoder_tokens, test_generator.max_seq_length, test_generator.token_indices, test_generator.reverse_token_indices, 
-                                 batch_size = batch_size)
-   
-    pred = predictor.predict(image)
+    image = read_image('./', filename, y_size, x_size, black_white = False)
+    #image = normalize_0_mean_1_variance(image_orig)
+    image = preprocess_input(image, mode='tf') 
     
-    print("Predicted label:", pred[0])
+    predictor = PredictorFCN(config)
+   
+#    pred = predictor.predict(image)
+    
+    prediction = predictor.predict(np.expand_dims(image, axis=0))[0]
+    pred_classes = np.argmax(prediction, axis=2)
+    
+    print("pred_classes:", pred_classes)
 
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Seq2seq')
     parser.add_argument('-c', '--conf', help='path to configuration file', required=True)
     
-#    subparsers = parser.add_subparsers(help='Arguments for specific dataset types.', dest='dataset_type')
-#    subparsers.required = True
-    
-#    predict_parser = subparsers.add_parser('--predict')
-#    predict_parser.add_argument('--filename', help='')
-
-#    pascal_parser = subparsers.add_parser('pascal')
-#    pascal_parser.add_argument('pascal_path', help='Path to dataset directory (ie. /tmp/VOCdevkit).')
-    
-#    argparser.add_argument('--predict-on-test', action='store_true', help='predict mode')
- #   parser = argparse.ArgumentParser(description='Arg parser')
-
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--train', action='store_true', help='Train')    
     group.add_argument('--predict_on_test', action='store_true', help='Predict on test set')

@@ -15,7 +15,7 @@ train:
     use_multiprocessing: false
     num_workers: 1
     weights_initialization: 
-        use_pretrained_weights: false
+        use_pretrained_weights: true
         restore_from: "./experiments/snapshot_last.h5"
     output:
         output_weights: "./snapshots/weights.h5"
@@ -23,8 +23,7 @@ predict:
     weights_file: "./snapshots/weights.h5"
     batch_size: 16
 network:
-
-    initialize_encoder_with_vgg16: true    
+    train_from_scratch: false
     decoder: 'decoder_8x'   #either decoder_8x, decoder_16x, decoder_32x 
     graph_path: "./snapshots/graph.json"
     num_classes: 21

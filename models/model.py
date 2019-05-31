@@ -16,8 +16,8 @@ from keras.layers import Input, LSTM, Dense, Conv2D, MaxPooling2D, Reshape, Drop
 from keras.optimizers import Adam
 
 from base.base_model import BaseModel
-from keras.applications.vgg16 import VGG16
-from keras.preprocessing import image
+#from keras.applications.vgg16 import VGG16
+#from keras.preprocessing import image
 #from keras.applications.vgg16 import preprocess_input
 import numpy as np
 from keras.models import model_from_json
@@ -39,6 +39,7 @@ class ModelFCN(BaseModel):
         self.num_channels = self.config['image']['image_size']['num_channels']
         self.num_classes = self.config['network']['num_classes']
         self.use_pretrained_weights = self.config['train']['weights_initialization']['use_pretrained_weights']
+        self.train_from_scratch = self.config['network']['train_from_scratch']
         self.graph_path = self.config['network']['graph_path']
         self.decoder = self.config['network']['decoder']
         self.model = self.build_model()
@@ -49,7 +50,7 @@ class ModelFCN(BaseModel):
 #        model.compile(optimizer = self.optimizer, loss = self.loss)
         model.compile(optimizer = self.optimizer, loss = custom_categorical_crossentropy())
 
-#        model.summary()
+        model.summary()
 
         return model
     
@@ -63,13 +64,15 @@ class ModelFCN(BaseModel):
 
             model = model_from_json(loaded_model_json)
             
-        else:    
-            input_graph, pool_3, pool_4, encoder_out = encoder_graph(self.y_size, self.x_size, self.num_channels, self.num_classes)
-
-#            print(encoder_out.shape)
-            
-#            input_graph, pool_3, pool_4, encoder_out = encoder_graph_vgg16(self.y_size, self.x_size, self.num_channels, self.num_classes)
-
+        else:   
+            #initialize encoder randomly
+            if self.train_from_scratch:
+                input_graph, pool_3, pool_4, encoder_out = encoder_graph(self.y_size, self.x_size, self.num_channels, self.num_classes)
+                
+            #initialize encoder with vgg16 weights
+            else:
+                input_graph, pool_3, pool_4, encoder_out = encoder_graph_vgg16(self.y_size, self.x_size, self.num_channels, self.num_classes)
+                        
 #            print(encoder_out.shape)
 
             if self.decoder == 'decoder_8x':
