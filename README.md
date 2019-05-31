@@ -6,7 +6,7 @@ This project is an implementation of the Fully Convolutional Network for Semanti
 
 The model is made by two parts, the "encoder" which is a standard convolutional network (VGG16 in this case following the paper), and the decoder which upsamples the result of the encoder to the full resolution of the original image using transposed convolutions. Skips between the encoder and decoder ensure that the spatial information from early layers of the encoder is passed to the decoder, increasing the localization accuracy of the model. 
 
-![picture alt](https://github.com/giovanniguidi/FCN-keras/tree/master/figures/FCN_1.jpg "")
+![picture alt](https://github.com/giovanniguidi/FCN-keras/blob/master/figures/FCN_1.png "")
 
 
 In the paper the authors use pretrained weights on ImageNet for the encoder, and tested three different decoders with increasing stride, 32x, 16x, 8x and corresponding increasing metrics.
@@ -33,7 +33,7 @@ You need to untar this file into "./datasets" folder to use this project without
 
 This is an example of the images in the dataset:
 
-![picture alt](https://github.com/giovanniguidi/FCN-keras/tree/master/test_images/2009_003466 "")
+![picture alt](https://github.com/giovanniguidi/FCN-keras/blob/master/test_images/2009_003466.jpg "")
 
 Modifying the data generator this implementation of FCN model can be easily trained on other data.
 
@@ -135,7 +135,7 @@ python main.py -c configs/config.yml --predict --filename test_images/test_image
 
 Here an example of prediction (check inference notebook in "notebooks"):
 
-![picture alt](https://github.com/giovanniguidi/FCN-keras/tree/master/figures/pred_3.png "")
+![picture alt](https://github.com/giovanniguidi/FCN-keras/blob/master/figures/pred_3.png "")
 
 On the test set we get this metrics:
 
