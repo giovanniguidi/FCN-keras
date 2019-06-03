@@ -1,0 +1,7 @@
+Keras==2.2.4
+numpy==1.15.4
+Pillow==5.2.0
+PyYAML==3.12
+tensorboard==1.13.1
+tensorflow==1.13.1
+

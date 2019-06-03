@@ -2,7 +2,7 @@ import os
 #import cv2
 import numpy as np
 from PIL import Image, ImageStat
-from scipy.io import loadmat
+#from scipy.io import loadmat
 
 def read_image(dataset_folder, filename, y_size, x_size, black_white = False):
 

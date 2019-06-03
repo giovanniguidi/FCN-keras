@@ -1,5 +1,5 @@
 ---
-dataset_folder: "./datasets/VOCtrainval_25-May-2011/TrainVal/VOCdevkit/VOC2011/"
+dataset_folder: "./datasets/VOC2012/"
 labels_file: "./datasets/labels.json"
 image:
     image_size:

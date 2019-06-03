@@ -10,4 +10,4 @@ experiments/*
 !.gitkeep
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
-datasets/VOCtrainval_25-May-2011/*
+datasets/VOC2012/*

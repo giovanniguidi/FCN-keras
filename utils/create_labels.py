@@ -54,7 +54,7 @@ def create_labels(data_folder, test_size, val_size, random_state):
 if __name__ == '__main__':
 
     
-    data_folder = '../datasets/VOCtrainval_25-May-2011/TrainVal/VOCdevkit/VOC2011/'
+    data_folder = '../datasets/VOC2012/'
     filename_out = '../datasets/labels.json'
     
     #split validation into val and test
@@ -65,7 +65,9 @@ if __name__ == '__main__':
     
     dataset_out = create_labels(data_folder, test_size = test_size, val_size = val_size, random_state = random_state)
     
-#    print(len(dataset_out['train']))
+    print("train set:", len(dataset_out['train']))
+    print("val set:", len(dataset_out['val']))
+    print("test set:", len(dataset_out['test']))
 
 #    print(dataset_out['train'][0])
 
