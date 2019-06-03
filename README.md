@@ -28,7 +28,7 @@ You need to untar this file into "./datasets" folder to use this project without
 
 This is an example of the images in the dataset:
 
-![picture alt](https://github.com/giovanniguidi/FCN-keras/blob/master/test_images/2009_003466.jpg "")
+![picture alt](https://github.com/giovanniguidi/FCN-keras/blob/master/test_images/2010_001403.jpg "")
 
 Modifying the data_generation function in data_generator.py the model can be easily trained on other data.
 
