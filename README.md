@@ -2,11 +2,11 @@
 
 This project is an implementation of the Fully Convolutional Network for Semantic Segmentation model (Long et al. 2015, https://arxiv.org/pdf/1411.4038.pdf) trained on VOC2012, although this implementation can be easily retrained on other datasets. The task this algorithm wants to solve is "semantic segmentation", i.e. given a picture assign each pixel a "semantic" label, such as tree, street, sky, car. 
 
-![picture alt](https://github.com/giovanniguidi/FCN-keras/tree/master/figures/semantic_segmentation.jpg "")
+![picture alt](https://github.com/giovanniguidi/FCN-keras/blob/master/figures/semantic_segmentation.jpg "")
 
 The model is made by two parts, the "encoder" which is a standard convolutional network (VGG16 in this case following the paper), and the decoder which upsamples the result of the encoder to the full resolution of the original image using transposed convolutions. Skips between the encoder and decoder ensure that the spatial information from early layers of the encoder is passed to the decoder, increasing the localization accuracy of the model. 
 
-![picture alt](https://github.com/giovanniguidi/FCN-keras/tree/master/figures/FCN_1.jpg "")
+![picture alt](https://github.com/giovanniguidi/FCN-keras/blob/master/figures/FCN_1.png "")
 
 In the paper the authors use for the encoder weights pretrained on ImageNet, and tested three different decoders with increasing strides (32x, 16x, 8x) and corresponding better values of the metrics.
 
@@ -28,7 +28,7 @@ You need to untar this file into "./datasets" folder to use this project without
 
 This is an example of the images in the dataset:
 
-![picture alt](https://github.com/giovanniguidi/FCN-keras/tree/master/test_images/008_005541.jpg "")
+![picture alt](https://github.com/giovanniguidi/FCN-keras/blob/master/test_images/2009_003466.jpg "")
 
 Modifying the data_generation function in data_generator.py the model can be easily trained on other data.
 
@@ -130,7 +130,7 @@ python main.py -c configs/config.yml --predict --filename test_images/test_image
 
 Here is an example of prediction:
 
-![picture alt](https://github.com/giovanniguidi/FCN-keras/tree/master/figures/pred_3.png "")
+![picture alt](https://github.com/giovanniguidi/FCN-keras/blob/master/figures/pred_3.png "")
 
 Check "inference.ipynb" in notebooks for a visual assessment of the prediction.
 
