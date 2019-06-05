@@ -11,3 +11,4 @@ experiments/*
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
 datasets/VOC2012/*
+*~
