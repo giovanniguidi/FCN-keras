@@ -130,7 +130,7 @@ python main.py -c configs/config.yml --predict --filename test_images/test_image
 
 Here is an example of prediction:
 
-![picture alt](https://github.com/giovanniguidi/FCN-keras/blob/master/figures/pred_3.png "")
+![picture alt](https://github.com/giovanniguidi/FCN-keras/blob/master/figures/pred_1.jpg "")
 
 Check "inference.ipynb" in notebooks for a visual assessment of the prediction.
 
