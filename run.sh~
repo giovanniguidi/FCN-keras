@@ -1,2 +1,0 @@
-#!/bin/bash
-python main -c configs/config.yml --train
