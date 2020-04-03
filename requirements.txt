@@ -1,6 +1,6 @@
 Keras==2.2.4
 numpy==1.15.4
-Pillow==6.2.0
+Pillow>=6.2.2
 PyYAML>=4.2b1
 tensorboard==1.13.1
 tensorflow>=1.15
