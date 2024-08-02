@@ -1,4 +1,4 @@
-Keras==2.2.4
+Keras==2.13.1
 numpy==1.15.4
 Pillow>=6.2.2
 PyYAML>=4.2b1
